@@ -1,0 +1,177 @@
+/* Define CSS variables */
+:root {
+  --grid-size: 4; /* Default value, will be overridden by JavaScript */
+  --tile-margin: 5px;
+  --grid-total-size: 500px; /* Adjust this value as needed */
+  --tile-size: calc(
+    (
+      var(--grid-total-size) - (var(--tile-margin) * 2 * var(--grid-size))
+    ) / var(--grid-size)
+  );
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  background: #faf8ef;
+  color: #776e65;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  margin-top: 50px;
+  font-size: 50px;
+}
+
+.game-container {
+  display: inline-block;
+  background: #bbada0;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.grid {
+  width: var(--grid-total-size);
+  height: var(--grid-total-size);
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.tile {
+  width: var(--tile-size);
+  height: var(--tile-size);
+  background: #cdc1b4;
+  margin: var(--tile-margin);
+  border-radius: 5px;
+  font-size: calc(var(--tile-size) / 2.5);
+  font-weight: bold;
+  color: #776e65;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+/* Tile Styles Based on Value */
+.tile.tile-2 {
+  background: #eee4da;
+}
+
+.tile.tile-4 {
+  background: #ede0c8;
+}
+
+.tile.tile-8 {
+  background: #f2b179;
+  color: #f9f6f2;
+}
+
+.tile.tile-16 {
+  background: #f59563;
+  color: #f9f6f2;
+}
+
+.tile.tile-32 {
+  background: #f67c5f;
+  color: #f9f6f2;
+}
+
+.tile.tile-64 {
+  background: #f65e3b;
+  color: #f9f6f2;
+}
+
+.tile.tile-128 {
+  background: #edcf72;
+  color: #f9f6f2;
+  font-size: calc(var(--tile-size) / 3);
+}
+
+.tile.tile-256 {
+  background: #edcc61;
+  color: #f9f6f2;
+  font-size: calc(var(--tile-size) / 3);
+}
+
+.tile.tile-512 {
+  background: #edc850;
+  color: #f9f6f2;
+  font-size: calc(var(--tile-size) / 3);
+}
+
+.tile.tile-1024 {
+  background: #edc53f;
+  color: #f9f6f2;
+  font-size: calc(var(--tile-size) / 4);
+}
+
+.tile.tile-2048 {
+  background: #edc22e;
+  color: #f9f6f2;
+  font-size: calc(var(--tile-size) / 4);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  :root {
+    --grid-total-size: 90vw;
+    --tile-margin: 2px;
+  }
+
+  h1 {
+    font-size: 30px;
+    margin-top: 20px;
+  }
+}
+
+/* Add these styles to your CSS */
+
+/* New Game button styles */
+#new-game-btn {
+  display: inline-block;
+  background-color: #8f7a66;
+  color: #f9f6f2;
+  text-decoration: none;
+  padding: 0 20px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 3px;
+  margin-left: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+}
+
+#new-game-btn:hover {
+  background-color: #9f8b7a;
+}
+
+.level-selection {
+  margin: 20px auto;
+  width: var(--grid-total-size);
+  text-align: center;
+}
+
+.level-selection h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.level-btn {
+  padding: 10px 20px;
+  font-size: 18px;
+  margin: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #8f7a66;
+  color: #f9f6f2;
+}
+
+.level-btn:hover {
+  background-color: #9f8b7a;
+}
