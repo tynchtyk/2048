@@ -175,3 +175,276 @@ h1 {
 .level-btn:hover {
   background-color: #9f8b7a;
 }
+
+/* General Button Styles */
+/* Power-Up Button Container */
+.power-up-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px; /* Spacing between buttons */
+  margin: 20px auto;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Individual Power-Up Button */
+.power-up-button {
+  width: 80px;
+  height: 80px;
+  background-color: #eee4da; /* Default cell color */
+  border: none;
+  border-radius: 5px; /* Slightly rounded corners, like 2048 cells */
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #f9f6f2; /* White icon color */
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Hover Effect */
+.power-up-button:hover {
+  transform: scale(1.1); /* Slight zoom on hover */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25); /* Slightly stronger shadow */
+}
+
+/* Active/Pressed Effect */
+.power-up-button:active {
+  transform: scale(0.95); /* Shrink slightly on press */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Inner shadow effect */
+}
+
+/* Icons Inside Buttons */
+.power-up-button .icon {
+  font-size: 32px; /* Larger icon size for visibility */
+  color: #f9f6f2; /* White icon color */
+}
+
+/* Button Background Colors Matching 2048 Tiles */
+.power-up-button.undo {
+  background-color: #f2b179; /* Like the 8 tile */
+}
+
+.power-up-button.shuffle {
+  background-color: #f59563; /* Like the 16 tile */
+}
+
+.power-up-button.teleport {
+  background-color: #f67c5f; /* Like the 32 tile */
+}
+
+.power-up-button.bomb {
+  background-color: #edcf72; /* Like the 128 tile */
+}
+
+.power-up-button.delete-tile {
+  background-color: #edc850; /* Like the 256 tile */
+}
+
+/* Tooltip for Power-Up Buttons */
+.tooltip {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
+  color: #ffffff; /* White text */
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.power-up-button:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+/* Icon Styles */
+.icon {
+  font-size: 24px;
+  color: #8d8678;
+}
+
+/* Specific Power-Up Icon Colors */
+.undo .icon {
+  color: #8d8678;
+}
+
+.shuffle .icon {
+  color: #8d8678;
+}
+
+.teleport .icon {
+  color: #4b9cd3;
+}
+
+.bomb .icon {
+  color: #d9534f;
+}
+
+.delete-tile .icon {
+  color: #ff6f61; /* Example: Red for Delete Tile */
+}
+
+
+/* Score Container */
+.score-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Individual Score Box */
+.score-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 60px;
+  background-color: #f5f1e8; /* Light background */
+  border-radius: 12px; /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  font-family: 'Arial', sans-serif;
+}
+
+/* Score Label */
+.score-box .label {
+  font-size: 12px;
+  color: #8d8678; /* Muted brown color */
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Score Value */
+.score-box .value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #8d8678; /* Muted brown color */
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #faf8ef;
+  color: #776e65;
+  font-family: 'Arial', sans-serif;
+}
+
+.hidden {
+  display: none;
+}
+
+.btn {
+  background: #8f7a66;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.btn:hover {
+  background: #9f8b7a;
+}
+
+.level-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.level-btn {
+  width: 120px;
+  height: 50px;
+  font-size: 1rem;
+}
+
+/* Dynamic Game Over Styling */
+#game-over {
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent dark background */
+  color: #f9f6f2;
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(0.9); /* Start smaller for animation */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#game-over.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+#game-over:not(.hidden) {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1); /* Animate to full size */
+}
+
+/* Accessibility Focus Styles */
+button:focus, .btn:focus, .level-btn:focus, .power-up-button:focus {
+  outline: 1px solid #4b9cd3; /* Blue outline for focus indication */
+  outline-offset: 2px;
+}
+
+
+:root {
+  --grid-total-size: 500px;
+  --tile-margin: 5px;
+  --tile-size: calc((var(--grid-total-size) - (var(--tile-margin) * 2 * var(--grid-size))) / var(--grid-size));
+}
+
+.grid {
+  display: grid;
+  grid-template-rows: repeat(var(--grid-size), 1fr);
+  grid-template-columns: repeat(var(--grid-size), 1fr);
+}
+
+
+
+/* Hover effects for source and destination tiles */
+/* Hover effects for source and destination tiles */
+.tile.hover-source {
+  outline: 3px solid #4b9cd3; /* Blue outline for source hover */
+  box-shadow: 0 0 10px rgba(75, 156, 211, 0.5);
+}
+
+.tile.hover-destination {
+  outline: 3px solid #76c68f; /* Green outline for destination hover */
+  box-shadow: 0 0 10px rgba(118, 198, 143, 0.5);
+}
+
+/* Selected source tile */
+.tile.selected-source {
+  outline: 3px solid #0033cc; /* Strong blue outline for selected source */
+  box-shadow: 0 0 15px rgba(0, 51, 204, 0.8);
+}

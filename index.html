@@ -1,24 +1,114 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2048 Game</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>2048 Game</h1>
-
-  <div class="score-container">
-    <h2>Score: <span id="score">0</span></h2>
-    <button id="new-game-btn">New Game</button>
+  <!-- Splash Screen -->
+  <div id="splash-screen" class="screen">
+    <h1>Welcome to 2048</h1>
+    <button id="start-game-btn" class="btn">Start Game</button>
   </div>
 
-  <div class="game-container">
-    <div class="grid">
-      <!-- The grid cells will be dynamically generated -->
+  <!-- Level Selection Screen -->
+  <div id="level-selection-screen" class="screen hidden">
+    <h1>Select Level</h1>
+    <div class="level-buttons">
+      <button class="btn level-btn" data-level="1">Level 1</button>
+      <button class="btn level-btn" data-level="2">Level 2</button>
+      <button class="btn level-btn" data-level="3">Level 3</button>
+      <button class="btn level-btn" data-level="4">Level 4</button>
+      <button class="btn level-btn" data-level="5">Level 5</button>
     </div>
   </div>
+
+  <!-- Game Screen -->
+  <div id="game-screen" class="screen hidden">
+    <h1>2048 Game</h1>
+
+    <!-- Score Section -->
+    <div class="score-container">
+      <div class="score-box">
+        <div class="label">SCORE</div>
+        <div class="value" id="score">0</div>
+      </div>
+      <div class="score-box">
+        <div class="label">BEST</div>
+        <div class="value" id="best-score">0</div>
+      </div>
+      <div class="score-box">
+        <div class="label">GOAL</div>
+        <div class="value" id="goal-score">0</div> <!-- New Goal Score Display -->
+      </div>
+      <button id="new-game-btn">New Game</button>
+    </div>
+
+    <!-- Game Container -->
+    <div class="game-container">
+      <div class="grid">
+        <!-- The grid cells will be dynamically generated -->
+      </div>
+    </div>
+
+    <!-- Power-Up Buttons -->
+    <div class="power-up-buttons">
+      <div class="power-up-button undo">
+          <span class="icon">⟲</span>
+          <div class="tooltip">Undo (2 uses left)</div>
+      </div>
+      <div class="power-up-button shuffle">
+          <span class="icon">🔄</span>
+          <div class="tooltip">Shuffle tiles (3 uses left)</div>
+      </div>
+      <div class="power-up-button teleport">
+          <span class="icon">📍</span>
+          <div class="tooltip">Teleport a tile (1 use left)</div>
+      </div>
+      <div class="power-up-button bomb">
+          <span class="icon">💣</span>
+          <div class="tooltip">Remove a random tile (1 use left)</div>
+      </div>
+      <div class="power-up-button delete-tile">
+          <span class="icon">❌</span>
+          <div class="tooltip">Delete a specific tile (1 use left)</div>
+      </div>
+    </div>
+
+
+    <!-- Game Over Overlay -->
+    <div id="game-over" class="overlay hidden">
+      <div class="message">
+        <h2>Game Over</h2>
+        <button id="restart-btn">Restart</button>
+      </div>
+    </div>
+
+    <div class="game-instructions">
+      <h2>How to Play</h2>
+      <p>
+        <strong>Objective:</strong> Slide numbered tiles on the grid using your <strong>arrow keys</strong>. 
+        When two tiles with the same number collide, they merge into a single tile with a value equal to their sum. 
+        Your goal is to create a tile with the value <strong id="goal-number">2048</strong> to win the game!
+      </p>
+      <h3>Power-Ups</h3>
+      <ul>
+        <li><strong>Undo:</strong> Revert your last move.</li>
+        <li><strong>Shuffle:</strong> Randomize the positions of all tiles on the grid.</li>
+        <li><strong>Teleport:</strong> Move a specific tile to an empty cell of your choice.</li>
+        <li><strong>Bomb:</strong> Remove a random tile from the grid.</li>
+        <li><strong>Delete Tile:</strong> Select and delete a specific tile of your choice.</li>
+      </ul>
+    </div>
+    
+    
+    
+    
+  </div>
+
+
   <script src="grid.js"></script>
   <script src="script.js"></script>
 </body>

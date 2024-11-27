@@ -1,14 +1,177 @@
-// grid.js
-
 class Grid {
-  constructor(size, gridElement, scoreDisplay) {
+  constructor(size, gridElement, scoreDisplay, bestScoreDisplay) {
     this.size = size;
     this.gridElement = gridElement;
     this.squares = [];
-    this.score = 0; // Initialize the score
-    this.scoreDisplay = scoreDisplay; // Reference to the score display element
+    this.score = 0; // Initialize the current score
+    this.bestScore = this.getBestScore(); // Retrieve the best score from local storage
+    this.scoreDisplay = scoreDisplay; // Reference to the current score display element
+    this.bestScoreDisplay = bestScoreDisplay; // Reference to the best score display element
+
+    // Initialize the score displays
+    this.scoreDisplay.textContent = this.score;
+    this.bestScoreDisplay.textContent = this.bestScore;
+
     this.createGrid();
   }
+
+  // Random tile removal (bomb)
+  useBomb() {
+    const nonEmptyTiles = this.squares.filter(tile => tile.value !== '');
+    if (nonEmptyTiles.length > 0) {
+      const randomTile = nonEmptyTiles[Math.floor(Math.random() * nonEmptyTiles.length)];
+      randomTile.value = '';
+      randomTile.element.innerHTML = '';
+      this.addTileStyles(randomTile);
+    } else {
+      alert('No tiles to delete!');
+    }
+  }
+
+  // Specific tile removal (delete tile)
+  useDeleteTile() {
+    const x = prompt('Enter the X coordinate (0-based):');
+    const y = prompt('Enter the Y coordinate (0-based):');
+    const tile = this.squares.find(tile => tile.x == x && tile.y == y);
+
+    if (tile && tile.value !== '') {
+      tile.value = '';
+      tile.element.innerHTML = '';
+      this.addTileStyles(tile);
+    } else {
+      alert('Invalid tile or empty tile!');
+    }
+  }
+
+  teleport() {
+    let selectedSource = null;
+
+    // Highlight the grid for interactivity
+    this.squares.forEach(tile => {
+        // Add a hover effect for tiles
+        tile.element.style.cursor = 'pointer';
+        tile.element.addEventListener('mouseover', () => {
+            if (!selectedSource) {
+                // Highlight non-empty tiles for source selection
+                if (tile.value !== '') {
+                    tile.element.classList.add('hover-source');
+                }
+            } else {
+                // Highlight empty tiles for destination selection
+                if (tile.value === '') {
+                    tile.element.classList.add('hover-destination');
+                }
+            }
+        });
+
+        tile.element.addEventListener('mouseout', () => {
+            tile.element.classList.remove('hover-source', 'hover-destination');
+        });
+
+        tile.element.addEventListener('click', () => {
+            // First selection: source tile
+            if (!selectedSource) {
+                if (tile.value === '') {
+                    alert('Please select a tile with a number first!');
+                } else {
+                    selectedSource = tile;
+                    tile.element.classList.add('selected-source');
+                }
+            } 
+            // Second selection: destination tile
+            else {
+                if (tile.value !== '') {
+                    alert('Please select an empty tile to teleport!');
+                } else {
+                    // Perform the swap
+                    tile.value = selectedSource.value;
+                    tile.element.innerHTML = selectedSource.value;
+                    selectedSource.value = '';
+                    selectedSource.element.innerHTML = '';
+
+                    // Update styles
+                    this.addTileStyles(tile);
+                    this.addTileStyles(selectedSource);
+
+                    // Clean up selection state
+                    selectedSource.element.classList.remove('selected-source');
+                    selectedSource = null;
+
+                    // Reset tile cursor
+                    this.squares.forEach(square => (square.element.style.cursor = 'default'));
+                }
+            }
+        });
+    });
+  }
+
+  shuffle() {
+    let selectedFirst = null; // Track the first selected tile
+
+    this.squares.forEach(tile => {
+        // Add hover effects for tiles
+        tile.element.style.cursor = gameGrid.swapMode ? 'pointer' : 'default';
+
+        tile.element.addEventListener('mouseover', () => {
+            if (gameGrid.swapMode) {
+                if (!selectedFirst && tile.value !== '') {
+                    tile.element.classList.add('hover-source');
+                } else if (selectedFirst && tile.value !== '') {
+                    tile.element.classList.add('hover-destination');
+                }
+            }
+        });
+
+        tile.element.addEventListener('mouseout', () => {
+            tile.element.classList.remove('hover-source', 'hover-destination');
+        });
+
+        tile.element.addEventListener('click', () => {
+            if (!gameGrid.swapMode) return; // Ignore clicks if swap mode is inactive
+
+            // First selection: Choose source tile
+            if (!selectedFirst) {
+                if (tile.value === '') {
+                    alert('Please select a tile with a number first!');
+                } else {
+                    selectedFirst = tile;
+                    tile.element.classList.add('selected-source');
+                }
+            } 
+            // Second selection: Choose destination tile
+            else {
+                if (tile.value === '') {
+                    alert('Please select another tile with a number to swap!');
+                } else {
+                    // Perform the swap
+                    const tempValue = tile.value;
+                    tile.value = selectedFirst.value;
+                    tile.element.innerHTML = selectedFirst.value;
+                    selectedFirst.value = tempValue;
+                    selectedFirst.element.innerHTML = tempValue;
+
+                    // Update styles
+                    this.addTileStyles(tile);
+                    this.addTileStyles(selectedFirst);
+
+                    // Reset selection and deactivate swap mode
+                    selectedFirst.element.classList.remove('selected-source');
+                    selectedFirst = null;
+                    gameGrid.swapMode = false;
+
+                    // Reset tile cursor
+                    this.squares.forEach(square => (square.element.style.cursor = 'default'));
+                    alert('Swap completed!');
+                }
+            }
+        });
+    });
+  }
+
+
+
+
+
 
   // Method to create the grid
   createGrid() {
@@ -56,7 +219,7 @@ class Grid {
     return this.squares.find(square => square.x === x && square.y === y);
   }
 
-  // Movement method
+  // Movement method (same as your current implementation)
   move(direction) {
     console.log(direction);
     let moved = false;
@@ -64,7 +227,7 @@ class Grid {
     if (direction === 'left') {
       for (let y = 0; y < this.size; y++) {
         let row = this.squares.filter(square => square.y === y);
-        row.sort((a, b) => a.x - b.x); // Left to right
+        row.sort((a, b) => a.x - b.x);
 
         let values = row.map(square => square.value);
         let newValues = this.slideAndCombine(values);
@@ -81,7 +244,7 @@ class Grid {
     } else if (direction === 'right') {
       for (let y = 0; y < this.size; y++) {
         let row = this.squares.filter(square => square.y === y);
-        row.sort((a, b) => b.x - a.x); // Right to left
+        row.sort((a, b) => b.x - a.x);
 
         let values = row.map(square => square.value);
         let newValues = this.slideAndCombine(values);
@@ -98,7 +261,7 @@ class Grid {
     } else if (direction === 'up') {
       for (let x = 0; x < this.size; x++) {
         let column = this.squares.filter(square => square.x === x);
-        column.sort((a, b) => a.y - b.y); // Top to bottom
+        column.sort((a, b) => a.y - b.y);
 
         let values = column.map(square => square.value);
         let newValues = this.slideAndCombine(values);
@@ -115,7 +278,7 @@ class Grid {
     } else if (direction === 'down') {
       for (let x = 0; x < this.size; x++) {
         let column = this.squares.filter(square => square.x === x);
-        column.sort((a, b) => b.y - a.y); // Bottom to top
+        column.sort((a, b) => b.y - a.y);
 
         let values = column.map(square => square.value);
         let newValues = this.slideAndCombine(values);
@@ -133,84 +296,108 @@ class Grid {
 
     if (moved) {
       this.generateNewNumber();
-      // Uncomment the line below if you implement game over logic
-       this.checkForGameOver();
+      this.checkForGameOver();
     }
   }
 
-  // Method to slide and combine tiles
+  // Slide and combine tiles with merge animations
   slideAndCombine(values) {
-    // Remove empty tiles
     let filteredValues = values.filter(value => value !== '');
     let combinedValues = [];
     let skipIndexes = [];
-  
+
     for (let i = 0; i < filteredValues.length; i++) {
       if (skipIndexes.includes(i)) continue;
-  
+
       if (i + 1 < filteredValues.length && filteredValues[i] === filteredValues[i + 1]) {
         const combinedValue = String(Number(filteredValues[i]) * 2);
         combinedValues.push(combinedValue);
-  
+
+        // Animate merge
+        const square = this.squares.find(s => s.value === filteredValues[i]);
+        if (square) square.element.classList.add('merge-animation');
+
         // Update the score
-        this.score += Number(combinedValue);
-        this.scoreDisplay.textContent = this.score;
-  
-        skipIndexes.push(i + 1); // Skip the next tile since it has been combined
+        this.updateScore(Number(combinedValue));
+
+        skipIndexes.push(i + 1);
       } else {
         combinedValues.push(filteredValues[i]);
       }
     }
-  
-    // Fill the rest with empty strings
+
     while (combinedValues.length < values.length) {
       combinedValues.push('');
     }
+
+    // Clean up animations after 300ms
+    setTimeout(() => {
+      this.squares.forEach(square => square.element.classList.remove('merge-animation'));
+    }, 300);
+
     return combinedValues;
   }
+
+  updateTilePositions() {
+    this.squares.forEach(square => {
+      if (square.value !== '') {
+        square.element.style.transform = `translate(${square.x * 100}%, ${square.y * 100}%)`;
+      } else {
+        square.element.style.transform = 'translate(-100%, -100%)'; // Move off-grid if empty
+      }
+    });
+  }
   
+
   checkForGameOver() {
-    // Check if there are any empty squares
-    if (this.squares.some(square => square.value === '')) {
-      return;
-    }
+    if (this.squares.some(square => square.value === '')) return;
   
-    // Check for possible merges horizontally and vertically
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
-        const currentSquare = this.getSquare(x, y);
-        const rightSquare = this.getSquare(x + 1, y);
-        const downSquare = this.getSquare(x, y + 1);
+        const current = this.getSquare(x, y);
+        const right = this.getSquare(x + 1, y);
+        const down = this.getSquare(x, y + 1);
   
-        if (
-          (rightSquare && currentSquare.value === rightSquare.value) ||
-          (downSquare && currentSquare.value === downSquare.value)
-        ) {
-          return; // A move is still possible
+        if ((right && current.value === right.value) || (down && current.value === down.value)) {
+          return;
         }
       }
     }
   
-    // No moves left; the game is over
-    alert('Game Over!');
+    // No moves left; show game over screen
+    const gameOverOverlay = document.getElementById('game-over');
+    gameOverOverlay.classList.remove('hidden');
   }
 
-  // Method to reset the game
-  reset() {
-    // Reset the score
-    this.score = 0;
+  // Method to update the score and best score
+  updateScore(points) {
+    this.score += points;
     this.scoreDisplay.textContent = this.score;
 
-    // Clear the grid
+    if (this.score > this.bestScore) {
+      this.bestScore = this.score;
+      this.bestScoreDisplay.textContent = this.bestScore;
+
+      // Save the best score to local storage
+      localStorage.setItem('bestScore', this.bestScore);
+    }
+  }
+
+  // Method to retrieve the best score from local storage
+  getBestScore() {
+    return localStorage.getItem('bestScore') ? Number(localStorage.getItem('bestScore')) : 0;
+  }
+
+  // Reset method (resets both current score and grid)
+  reset() {
+    this.score = 0;
+    this.scoreDisplay.textContent = this.score;
     this.squares.forEach(square => {
       square.value = '';
       square.element.innerHTML = '';
       square.element.className = 'tile';
     });
-
-    // Generate two new numbers
     this.generateNewNumber();
     this.generateNewNumber();
   }
-  
 }
