@@ -448,3 +448,70 @@ button:focus, .btn:focus, .level-btn:focus, .power-up-button:focus {
   outline: 3px solid #0033cc; /* Strong blue outline for selected source */
   box-shadow: 0 0 15px rgba(0, 51, 204, 0.8);
 }
+
+#splash-screen {
+
+  align-items: center; /* Center items horizontally */
+  text-align: center;
+  padding: 20px;
+  height: 100vh;
+  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+}
+
+#splash-screen img {
+  max-width: 300px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* General Styling for Game Instructions */
+.game-instructions {
+  margin: 20px auto;
+  max-width: 600px;
+  text-align: left;
+  font-family: Arial, sans-serif;
+}
+
+.game-instructions h2, .game-instructions h3 {
+  color: #333;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.game-instructions p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* Styling for Power-Up Instructions */
+.power-up-instructions {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.power-up-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.power-up-item .icon {
+  font-size: 1.8em;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007acc;
+  color: #fff;
+  border-radius: 50%;
+}
+
+.power-up-item .description {
+  font-size: 1.1em;
+  color: #333;
+}

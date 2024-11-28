@@ -24,11 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let powerUpUses = {}; // Will be populated dynamically for each level
 
   const levels = [
-      { level: 1, size: 3, target: 128, powerUpUses: { undo: 1, shuffle: 1, teleport: 1, bomb: 1, deleteTile: 1 } },
-      { level: 2, size: 4, target: 256, powerUpUses: { undo: 2, shuffle: 2, teleport: 1, bomb: 2, deleteTile: 1 } },
-      { level: 3, size: 5, target: 512, powerUpUses: { undo: 3, shuffle: 3, teleport: 2, bomb: 2, deleteTile: 1 } },
-      { level: 4, size: 6, target: 1024, powerUpUses: { undo: 3, shuffle: 3, teleport: 2, bomb: 3, deleteTile: 2 } },
-      { level: 5, size: 7, target: 2048, powerUpUses: { undo: 4, shuffle: 4, teleport: 3, bomb: 3, deleteTile: 2 } },
+      { level: 1, size: 3, target: 256, powerUpUses: { undo: 1, shuffle: 1, teleport: 1, bomb: 1, deleteTile: 1 } },
+      { level: 2, size: 4, target: 512, powerUpUses: { undo: 2, shuffle: 2, teleport: 1, bomb: 2, deleteTile: 1 } },
+      { level: 3, size: 5, target: 2048, powerUpUses: { undo: 3, shuffle: 3, teleport: 2, bomb: 2, deleteTile: 1 } },
+      { level: 4, size: 6, target: 4096, powerUpUses: { undo: 3, shuffle: 3, teleport: 2, bomb: 3, deleteTile: 2 } },
+      { level: 5, size: 7, target: 8192, powerUpUses: { undo: 4, shuffle: 4, teleport: 3, bomb: 3, deleteTile: 2 } },
   ];
 
   // Show Level Selection Screen
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
 
 
-  window.addEventListener('resize', () => this.updateTilePositions());
+//  window.addEventListener('resize', () => gameGrid.updateTilePositions());
 
 
   function updatePowerUpTooltips() {
