@@ -1,8 +1,8 @@
 class Grid {
-  constructor(size, gridElement, scoreDisplay, bestScoreDisplay) {
+  constructor(size, gridElement, scoreDisplay, bestScoreDisplay, squares) {
     this.size = size;
     this.gridElement = gridElement;
-    this.squares = [];
+    this.squares = squares;
     this.score = 0; // Initialize the current score
     this.bestScore = this.getBestScore(); // Retrieve the best score from local storage
     this.scoreDisplay = scoreDisplay; // Reference to the current score display element
@@ -14,6 +14,92 @@ class Grid {
 
     this.createGrid();
   }
+
+  clearGrid() {
+    this.gridElement.innerHTML = ''; // Clear all child elements
+    this.squares = []; // Reset the squares array
+  }
+
+  getState() {
+    return {
+        squares: this.squares.map(square => ({
+            x: square.x,
+            y: square.y,
+            value: square.value
+        })),
+        score: this.score
+    };
+  }
+
+  saveState(state) {
+    if (!this.history) this.history = [];
+    this.history.push(state);
+    console.log(state.squares);
+    console.log(state.score);
+  }
+
+  exportState() {
+    return {
+        size: this.size,
+        squares: this.squares.map(square => ({
+            x: square.x,
+            y: square.y,
+            value: square.value
+        })),
+        score: this.score,
+        bestScore: this.bestScore
+    };
+}
+
+  importState(state) {
+    // Validate state before loading
+    if (!state || state.size !== this.size || !Array.isArray(state.squares)) {
+        alert('Invalid game state!');
+        return;
+    }
+
+    // Clear the current grid
+    this.clearGrid();
+
+    // Load squares
+    state.squares.forEach(squareData => {
+        const square = this.getSquare(squareData.x, squareData.y);
+        if (square) {
+            square.value = squareData.value;
+            square.element.innerHTML = squareData.value;
+            this.addTileStyles(square);
+        }
+    });
+
+    // Load scores
+    this.score = state.score || 0;
+    this.bestScore = state.bestScore || 0;
+    this.scoreDisplay.textContent = this.score;
+    this.bestScoreDisplay.textContent = this.bestScore;
+  }
+
+  restoreState() {
+    if (!this.history || this.history.length === 0) {
+        alert('No moves to undo!');
+        return false;
+    }
+    const previousState = this.history.pop();
+
+    // Restore squares
+    this.squares.forEach(square => {
+        const savedSquare = previousState.squares.find(s => s.x === square.x && s.y === square.y);
+        square.value = savedSquare.value;
+        square.element.innerHTML = savedSquare.value;
+        this.addTileStyles(square);
+    });
+
+    // Restore score
+    this.score = previousState.score;
+    this.scoreDisplay.textContent = this.score;
+    return true;
+  }
+
+  
 
   // Random tile removal (bomb)
   useBomb() {
@@ -223,7 +309,7 @@ class Grid {
   move(direction) {
     console.log(direction);
     let moved = false;
-
+    let state = this.getState();
     if (direction === 'left') {
       for (let y = 0; y < this.size; y++) {
         let row = this.squares.filter(square => square.y === y);
@@ -295,6 +381,7 @@ class Grid {
     }
 
     if (moved) {
+      this.saveState(state); // Save the current state before generating a new tile
       this.generateNewNumber();
       this.checkForGameOver();
     }
