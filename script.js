@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // Start a new game with given size, target, and level configuration
     function startGame(size, target, levelConfig) {
+      console.log('Starting new game with size:', size, 'target:', target, 'level:', levelConfig);
       document.documentElement.style.setProperty('--grid-size', size);
   
       if (gameGrid) {
@@ -244,13 +245,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const { size, target, powerUpUses } = levelConfig;
   
       document.getElementById('goal-number').textContent = target;
-      document.getElementById('grid-size').textContent = `${size}x${size}`;
+      //document.getElementById('grid-size').textContent = `${size}x${size}`;
       document.getElementById('goal-score').textContent = target;
-      document.getElementById('power-up-undo').textContent = powerUpUses.undo;
-      document.getElementById('power-up-shuffle').textContent = powerUpUses.shuffle;
-      document.getElementById('power-up-teleport').textContent = powerUpUses.teleport;
-      document.getElementById('power-up-bomb').textContent = powerUpUses.bomb;
-      document.getElementById('power-up-delete-tile').textContent = powerUpUses.deleteTile;
+      //document.getElementById('power-up-undo').textContent = powerUpUses.undo;
+      //document.getElementById('power-up-shuffle').textContent = powerUpUses.shuffle;
+      //document.getElementById('power-up-teleport').textContent = powerUpUses.teleport;
+      //document.getElementById('power-up-bomb').textContent = powerUpUses.bomb;
+      //document.getElementById('power-up-delete-tile').textContent = powerUpUses.deleteTile;
     }
   
     // Load a previously saved game state
@@ -291,6 +292,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
       splashScreen.classList.add('hidden');
       gameScreen.classList.remove('hidden');
+
+      const goalScoreElement = document.getElementById('goal-score');
+      goalScoreElement.textContent = gameState.target;
   
       // Infer the level from the grid size (assuming size = level + 2)
       const level = size - 2;
