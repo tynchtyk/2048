@@ -515,3 +515,33 @@ button:focus, .btn:focus, .level-btn:focus, .power-up-button:focus {
   font-size: 1.1em;
   color: #333;
 }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.hidden {
+  display: none;
+}
+
+.overlay .message {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.hover-bomb {
+  background-color: rgba(255, 0, 0, 0.4); /* Red translucent background */
+  border: 2px solid red; /* Optional border for better visibility */
+}
+

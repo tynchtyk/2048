@@ -1,5 +1,5 @@
 class Grid {
-  constructor(size, gridElement, scoreDisplay, bestScoreDisplay, squares) {
+  constructor(size, gridElement, scoreDisplay, bestScoreDisplay, squares, targetScore) {
     this.size = size;
     this.gridElement = gridElement;
     this.squares = squares;
@@ -7,6 +7,7 @@ class Grid {
     this.bestScore = this.getBestScore(); // Retrieve the best score from local storage
     this.scoreDisplay = scoreDisplay; // Reference to the current score display element
     this.bestScoreDisplay = bestScoreDisplay; // Reference to the best score display element
+    this.targetScore = targetScore; // Target score to win the game
 
     // Initialize the score displays
     this.scoreDisplay.textContent = this.score;
@@ -128,6 +129,34 @@ class Grid {
       alert('Invalid tile or empty tile!');
     }
   }
+
+  getNeighbors(x, y) {
+    const neighbors = [];
+
+    // Define relative positions for the tile and its neighbors
+    const directions = [
+        { dx: 0, dy: 0 },   // Current tile
+        { dx: -1, dy: 0 },  // Left
+        { dx: 1, dy: 0 },   // Right
+        { dx: 0, dy: -1 },  // Up
+        { dx: 0, dy: 1 },   // Down
+        { dx: -1, dy: -1 }, // Top-left
+        { dx: 1, dy: -1 },  // Top-right
+        { dx: -1, dy: 1 },  // Bottom-left
+        { dx: 1, dy: 1 }    // Bottom-right
+    ];
+
+    // Find valid neighbors
+    directions.forEach(({ dx, dy }) => {
+        const neighbor = this.getSquare(x + dx, y + dy);
+        if (neighbor) {
+            neighbors.push(neighbor);
+        }
+    });
+
+    return neighbors;
+}
+
 
   teleport() {
     let selectedSource = null;
@@ -306,7 +335,7 @@ class Grid {
   }
 
   // Movement method (same as your current implementation)
-  move(direction) {
+  move(direction, newGame, nextGame) {
     console.log(direction);
     let moved = false;
     let state = this.getState();
@@ -383,7 +412,7 @@ class Grid {
     if (moved) {
       this.saveState(state); // Save the current state before generating a new tile
       this.generateNewNumber();
-      this.checkForGameOver();
+      this.checkForGameOver(newGame, nextGame);
     }
   }
 
@@ -436,25 +465,64 @@ class Grid {
   }
   
 
-  checkForGameOver() {
-    if (this.squares.some(square => square.value === '')) return;
-  
-    for (let y = 0; y < this.size; y++) {
-      for (let x = 0; x < this.size; x++) {
-        const current = this.getSquare(x, y);
-        const right = this.getSquare(x + 1, y);
-        const down = this.getSquare(x, y + 1);
-  
-        if ((right && current.value === right.value) || (down && current.value === down.value)) {
-          return;
+  checkForGameOver(newGame, nextGame) {
+    // Check if the player has won
+    const hasWon = this.squares.some(square => parseInt(square.value) === this.targetScore);
+    if (hasWon) {
+        const proceed = confirm('Congratulations! You won! Do you want to proceed to the next level?');
+        if (proceed) {
+            nextGame();
         }
-      }
+        return; // Exit function if player won
     }
-  
-    // No moves left; show game over screen
-    const gameOverOverlay = document.getElementById('game-over');
-    gameOverOverlay.classList.remove('hidden');
-  }
+
+    // Check if there are any empty tiles
+    const hasEmptyTile = this.squares.some(square => square.value === '');
+    if (hasEmptyTile) return; // Game is not over if there's at least one empty tile
+
+    // Check if there are any possible merges
+    for (let y = 0; y < this.size; y++) {
+        for (let x = 0; x < this.size; x++) {
+            const current = this.getSquare(x, y);
+            const right = this.getSquare(x + 1, y);
+            const down = this.getSquare(x, y + 1);
+
+            // If adjacent tiles can merge, the game is not over
+            if (
+                (right && current.value === right.value) ||
+                (down && current.value === down.value)
+            ) {
+                return;
+            }
+        }
+    }
+
+    // If no moves left, game over
+    const restart = confirm('Game Over! Try again?');
+    if (restart) {
+        newGame(); // Restart the game
+    }
+}
+
+
+
+reset() {
+    this.score = 0;
+    this.scoreDisplay.textContent = this.score;
+
+    // Clear the grid
+    this.squares.forEach(square => {
+        square.value = '';
+        square.element.innerHTML = '';
+        square.element.className = 'tile';
+    });
+
+    // Generate new numbers for the starting grid
+    this.generateNewNumber();
+    this.generateNewNumber();
+}
+
+
 
   // Method to update the score and best score
   updateScore(points) {

@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreDisplay         = document.getElementById('score');
     const bestScoreDisplay     = document.getElementById('best-score');
     const newGameButton        = document.getElementById('new-game-btn');
-    const restartButton        = document.getElementById('restart-btn');
     const gameOverOverlay      = document.getElementById('game-over');
     const startGameButton      = document.getElementById('start-game-btn');
     const levelButtons         = document.querySelectorAll('.level-btn');
@@ -17,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadStateButton  = document.getElementById('download-state-btn');
     const loadStateButton      = document.getElementById('load-state-btn');
     const loadStateInput       = document.getElementById('load-state-input');
+    const endScreenOverlay = document.getElementById('end-screen');
   
     // Power-Up Buttons
     const undoButton        = document.querySelector('.power-up-button.undo');
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // Level configurations
     const levels = [
-      { level: 1, size: 3,  target: 256,  powerUpUses: { undo: 1, shuffle: 1, teleport: 1, bomb: 1, deleteTile: 1 } },
+      { level: 1, size: 3,  target: 128,  powerUpUses: { undo: 1, shuffle: 1, teleport: 1, bomb: 1, deleteTile: 1 } },
       { level: 2, size: 4,  target: 512,  powerUpUses: { undo: 2, shuffle: 2, teleport: 1, bomb: 2, deleteTile: 1 } },
       { level: 3, size: 5,  target: 2048, powerUpUses: { undo: 3, shuffle: 3, teleport: 2, bomb: 2, deleteTile: 1 } },
       { level: 4, size: 6,  target: 4096, powerUpUses: { undo: 3, shuffle: 3, teleport: 2, bomb: 3, deleteTile: 2 } },
@@ -61,8 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
   
-        levelSelectionScreen.classList.add('hidden');
-        gameScreen.classList.remove('hidden');
+        
   
         // Adjust power-up buttons visibility based on selected level
         configurePowerUpButtonsForLevel(level);
@@ -78,8 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (validKeys.includes(e.key)) {
         e.preventDefault();
         const direction = e.key.replace('Arrow', '').toLowerCase();
-        gameGrid.move(direction);
-      }
+        gameGrid.move(direction, () => startGame(gameGrid.size, gameGrid.target, {}), goToNextLevel);
+    }
     });
   
     // Back to Home Screen Button
@@ -136,12 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
       gameGrid.reset();
       gameOverOverlay.classList.add('hidden');
     });
-  
-    // Restart Button in Game Over Overlay
-    restartButton.addEventListener('click', () => {
-      gameGrid.reset();
-      gameOverOverlay.classList.add('hidden');
-    });
+
   
     // Power-Up Buttons
     undoButton.addEventListener('click', () => {
@@ -181,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (powerUpUses.bomb > 0) {
         powerUpUses.bomb--;
         updatePowerUpTooltips();
-        gameGrid.useBomb();
+        enableBomb();
       } else {
         alert('No bomb uses left!');
       }
@@ -216,9 +210,22 @@ document.addEventListener('DOMContentLoaded', () => {
       if (level >= 4) bombButton.classList.remove('hidden');
       if (level >= 5) deleteTileButton.classList.remove('hidden');
     }
-  
+    
+    function goToNextLevel() {
+        const currentLevelIndex = levels.findIndex(l => l.size === gameGrid.size && l.target === gameGrid.targetScore);
+        if (currentLevelIndex < levels.length - 1) {
+            const nextLevel = levels[currentLevelIndex + 1];
+            startGame(nextLevel.size, nextLevel.target, nextLevel);
+        } else {
+            alert('You have completed all levels! Great job!');
+            startGame(levels[0].size, levels[0].target, levels[0]); // Restart from the first level
+        }
+    }
+
     // Start a new game with given size, target, and level configuration
     function startGame(size, target, levelConfig) {
+      levelSelectionScreen.classList.add('hidden');
+      gameScreen.classList.remove('hidden');
       console.log('Starting new game with size:', size, 'target:', target, 'level:', levelConfig);
       document.documentElement.style.setProperty('--grid-size', size);
   
@@ -226,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameGrid.clearGrid();
       }
   
-      gameGrid = new Grid(size, gridDisplay, scoreDisplay, bestScoreDisplay, []);
+      gameGrid = new Grid(size, gridDisplay, scoreDisplay, bestScoreDisplay, [], target);
       gameGrid.target = target;
   
       powerUpUses = { ...levelConfig.powerUpUses };
@@ -268,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const size = Math.sqrt(gameState.squares.length);
       document.documentElement.style.setProperty('--grid-size', size);
   
-      gameGrid = new Grid(size, gridDisplay, scoreDisplay, bestScoreDisplay, []);
+      gameGrid = new Grid(size, gridDisplay, scoreDisplay, bestScoreDisplay, [], gameState.target);
       gameGrid.target = gameState.target;
       gameGrid.scoreDisplay.textContent = gameState.score;
       gameGrid.bestScoreDisplay.textContent = gameState.bestScore;
@@ -507,6 +514,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     }
+
+    function enableBomb() {
+        let bombMode = true; // Enable bomb mode
+    
+        gameGrid.squares.forEach(tile => {
+            tile.element.style.cursor = 'pointer'; // Highlight tiles for selection
+    
+            // Add mouseover listener
+            tile.element.addEventListener('mouseover', () => {
+                if (bombMode) {
+                    // Highlight the tile and its neighbors
+                    const neighbors = gameGrid.getNeighbors(tile.x, tile.y);
+                    neighbors.forEach(neighbor => {
+                        neighbor.element.classList.add('hover-source');
+                    });
+                }
+            });
+    
+            // Add mouseout listener
+            tile.element.addEventListener('mouseout', () => {
+                if (bombMode) {
+                    // Remove highlight from the tile and its neighbors
+                    const neighbors = gameGrid.getNeighbors(tile.x, tile.y);
+                    neighbors.forEach(neighbor => {
+                        neighbor.element.classList.remove('hover-source');
+                    });
+                }
+            });
+    
+            // Add click listener
+            tile.element.addEventListener('click', () => {
+                if (!bombMode) return;
+    
+                // Get the tile and its neighbors
+                const neighbors = gameGrid.getNeighbors(tile.x, tile.y);
+    
+                // Clear values and update styles
+                neighbors.forEach(neighbor => {
+                    neighbor.value = '';
+                    neighbor.element.innerHTML = '';
+                    gameGrid.addTileStyles(neighbor);
+                });
+    
+                // Disable bomb mode
+                bombMode = false;
+    
+                // Reset tile cursors
+                gameGrid.squares.forEach(square => (square.element.style.cursor = 'default'));
+            });
+        });
+    }
+    
   
   });
   
