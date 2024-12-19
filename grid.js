@@ -335,7 +335,7 @@ class Grid {
   }
 
   // Movement method (same as your current implementation)
-  move(direction, newGame, nextGame) {
+  move(direction, newGame, nextGame, tutorialCompletion) {
     console.log(direction);
     let moved = false;
     let state = this.getState();
@@ -412,7 +412,7 @@ class Grid {
     if (moved) {
       this.saveState(state); // Save the current state before generating a new tile
       this.generateNewNumber();
-      this.checkForGameOver(newGame, nextGame);
+      this.checkForGameOver(newGame, nextGame, tutorialCompletion);
     }
   }
 
@@ -465,15 +465,19 @@ class Grid {
   }
   
 
-  checkForGameOver(newGame, nextGame) {
+  checkForGameOver(newGame, nextGame, tutorialCompletion) {
     // Check if the player has won
     const hasWon = this.squares.some(square => parseInt(square.value) === this.targetScore);
     if (hasWon) {
+      if (this.size === 2) {
+        tutorialCompletion();
+      } else {
         const proceed = confirm('Congratulations! You won! Do you want to proceed to the next level?');
         if (proceed) {
             nextGame();
         }
-        return; // Exit function if player won
+      }
+      return; // Exit function if player won
     }
 
     // Check if there are any empty tiles

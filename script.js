@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadStateButton      = document.getElementById('load-state-btn');
     const loadStateInput       = document.getElementById('load-state-input');
     const endScreenOverlay = document.getElementById('end-screen');
-  
+
     // Power-Up Buttons
     const undoButton        = document.querySelector('.power-up-button.undo');
     const shuffleButton     = document.querySelector('.power-up-button.shuffle');
@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // Level configurations
     const levels = [
-      { level: 1, size: 3,  target: 128,  powerUpUses: { undo: 1, shuffle: 1, teleport: 1, bomb: 1, deleteTile: 1 } },
+      //{ level: 0, size: 2, target: 8, powerUpUses: { undo: 0, shuffle: 0, teleport: 0, bomb: 0, deleteTile: 0 }, isTutorial: true },
+      { level: 1, size: 3,  target: 32,  powerUpUses: { undo: 1, shuffle: 1, teleport: 1, bomb: 1, deleteTile: 1 } },
       { level: 2, size: 4,  target: 512,  powerUpUses: { undo: 2, shuffle: 2, teleport: 1, bomb: 2, deleteTile: 1 } },
       { level: 3, size: 5,  target: 2048, powerUpUses: { undo: 3, shuffle: 3, teleport: 2, bomb: 2, deleteTile: 1 } },
       { level: 4, size: 6,  target: 4096, powerUpUses: { undo: 3, shuffle: 3, teleport: 2, bomb: 3, deleteTile: 2 } },
@@ -77,9 +78,27 @@ document.addEventListener('DOMContentLoaded', () => {
       if (validKeys.includes(e.key)) {
         e.preventDefault();
         const direction = e.key.replace('Arrow', '').toLowerCase();
-        gameGrid.move(direction, () => startGame(gameGrid.size, gameGrid.target, {}), goToNextLevel);
+        gameGrid.move(direction, () => startGame(gameGrid.size, gameGrid.target, {}), goToNextLevel, showTutorialCompletion);
     }
     });
+
+    function showTutorialCompletion() {
+      const instructions = document.getElementById('tutorial-instructions');
+      const closeBtn = document.getElementById('tutorial-close-btn');
+      instructions.textContent = "Great job! You've learned the basics. Click Continue to return to level selection.";
+      closeBtn.classList.remove('hidden');
+      const tutorialOverlay = document.getElementById('tutorial-overlay');
+      tutorialOverlay.classList.remove('hidden');
+    
+      closeBtn.addEventListener('click', () => {
+        hideTutorialOverlay();
+        // Return to level selection
+        gameGrid.clearGrid();
+        gameScreen.classList.add('hidden');
+        levelSelectionScreen.classList.remove('hidden');
+      }, { once: true });
+    }
+    
   
     // Back to Home Screen Button
     backHomeButton.addEventListener('click', () => {
@@ -243,9 +262,50 @@ document.addEventListener('DOMContentLoaded', () => {
   
       const goalScoreElement = document.getElementById('goal-score');
       goalScoreElement.textContent = target;
-  
+      
+      if (levelConfig.isTutorial) {
+        setupTutorial();
+      }
+    
       console.log(`Game started with size: ${size}, target: ${target}`, powerUpUses);
     }
+
+    function setupTutorial() {
+      // Clear the grid first (if needed)
+      //gameGrid.clearGrid();
+    
+      // Manually place two tiles with value "2"
+      // For example, place them at (0,0) and (1,0) so a swipe up merges them
+      const tile1 = gameGrid.getSquare(1,1);
+      console.log("Tile value", tile1);
+      tile1.value = '2';
+      tile1.element.innerHTML = '2';
+      gameGrid.addTileStyles(tile1);
+    
+      const tile2 = gameGrid.getSquare(1,0);
+      tile2.value = '2';
+      tile2.element.innerHTML = '2';
+      gameGrid.addTileStyles(tile2);
+    
+      // Show an instruction overlay or hint
+      showTutorialOverlay("Swipe Up to merge the two tiles!");
+    }
+
+    function showTutorialOverlay(message) {
+      const tutorialOverlay = document.getElementById('tutorial-overlay');
+      const instructions = document.getElementById('tutorial-instructions');
+      const closeBtn = document.getElementById('tutorial-close-btn');
+      instructions.textContent = message;
+      tutorialOverlay.classList.remove('hidden');
+      closeBtn.classList.add('hidden');
+    }
+    
+    function hideTutorialOverlay() {
+      const tutorialOverlay = document.getElementById('tutorial-overlay');
+      tutorialOverlay.classList.add('hidden');
+    }
+    
+    
   
     // Update instructions on the screen with data from the level configuration
     function updateLevelInstructions(levelConfig) {
@@ -566,6 +626,64 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+
+    const gameContainer = document.querySelector('.game-container'); // or the relevant container
+    let startX, startY, endX, endY;
+
+    // Add event listeners for touch events
+    gameContainer.addEventListener('touchstart', handleTouchStart, false);
+    gameContainer.addEventListener('touchmove', handleTouchMove, false);
+    gameContainer.addEventListener('touchend', handleTouchEnd, false);
+
+    function handleTouchStart(e) {
+      // Take the first touch as the starting point
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+    }
+
+    function handleTouchMove(e) {
+      // As the user swipes, store the current position
+      // This is optional if you only need end position,
+      // but it can help if you want continuous feedback.
+      const touch = e.touches[0];
+      endX = touch.clientX;
+      endY = touch.clientY;
+    }
+
+    function handleTouchEnd() {
+      // Calculate the distance swiped
+      const deltaX = endX - startX;
+      const deltaY = endY - startY;
+
+      // Determine whether the swipe was more horizontal or vertical
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (deltaX > 0) {
+          // Swipe right
+          gameGrid.move('right');
+        } else {
+          // Swipe left
+          gameGrid.move('left');
+        }
+      } else {
+        // Vertical swipe
+        if (deltaY > 0) {
+          // Swipe down
+          gameGrid.move('down');
+        } else {
+          // Swipe up
+          gameGrid.move('up');
+        }
+      }
+
+      // Reset the coordinates
+      startX = null;
+      startY = null;
+      endX = null;
+      endY = null;
+    }
+
   
   });
   

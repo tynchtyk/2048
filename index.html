@@ -119,11 +119,24 @@
       </ul>
     </div>
     
-    
-    
+    <!-- Tutorial Screen -->
+    <div id="tutorial-screen" class="screen hidden">
+      <h1>Tutorial</h1>
+      <p>Welcome to the 2048 tutorial! Here’s how you play:</p>
+      <ol>
+        <li>Use arrow keys (or swipe on mobile) to move tiles.</li>
+        <li>When two tiles with the same number touch, they merge into one tile with the sum of those two numbers.</li>
+        <li>Keep merging until you create the target tile (e.g., 2048) to win.</li>
+      </ol>
     
   </div>
-
+  
+  <div id="tutorial-overlay" class="overlay hidden">
+    <div class="message">
+      <p id="tutorial-instructions"></p>
+      <button id="tutorial-close-btn" class="btn hidden">Continue</button>
+    </div>
+  </div>
 
 
 
