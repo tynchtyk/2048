@@ -243,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Start a new game with given size, target, and level configuration
     function startGame(size, target, levelConfig) {
+      configurePowerUpButtonsForLevel(size - 2);
       levelSelectionScreen.classList.add('hidden');
       gameScreen.classList.remove('hidden');
       console.log('Starting new game with size:', size, 'target:', target, 'level:', levelConfig);
