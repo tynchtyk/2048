@@ -545,3 +545,235 @@ button:focus, .btn:focus, .level-btn:focus, .power-up-button:focus {
   border: 2px solid red; /* Optional border for better visibility */
 }
 
+
+@media (max-width: 600px) {
+  :root {
+    /* Slightly reduce total grid size further */
+    --grid-total-size: 85vw; 
+    --tile-margin: 2px; /* Reduce tile margin to save space */
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;      /* Ensure the body fits the viewport height */
+    overflow: hidden;   /* Prevent scrolling */
+  }
+
+  body {
+    font-size: 1rem; /* Keep a decent base font size for readability, but not too large */
+  }
+
+  h1 {
+    font-size: 1.8rem; 
+    margin-top: 10px;   /* Reduce top margin to save vertical space */
+    margin-bottom: 10px;
+  }
+
+  .game-container {
+    padding: 5px;
+    margin-top: 5px;
+  }
+
+  .tile {
+    /* Slightly smaller font to ensure tiles fit comfortably */
+    font-size: calc(var(--tile-size) / 3.2);
+  }
+
+  .score-container {
+    flex-direction: row; /* Keep horizontally aligned to save vertical space */
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+  }
+
+  .score-box {
+    width: 70px;
+    height: 40px;
+  }
+
+  .score-box .value {
+    font-size: 18px;
+  }
+
+  .btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    margin: 3px;
+  }
+
+  .power-up-buttons {
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .power-up-button {
+    width: 50px;
+    height: 50px;
+    font-size: 12px;
+  }
+
+  .power-up-button .icon {
+    font-size: 20px;
+  }
+
+  /* Reduce or hide instructions on small screens to prevent scrolling */
+  .game-instructions {
+    display: none; /* Hide instructions entirely to save space */
+  }
+
+  /* If you must show instructions, try making them very compact:
+  .game-instructions {
+    font-size: 0.9rem;
+    padding: 5px;
+    margin: 0;
+  }
+
+  .game-instructions h2, .game-instructions h3 {
+    font-size: 1.1em;
+    margin: 5px 0;
+  }
+
+  .game-instructions p {
+    font-size: 0.9em;
+    line-height: 1.2;
+    margin: 5px 0;
+  }
+  */
+
+  /* Tutorial or other static screens if present */
+  #tutorial-screen .tile {
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+    line-height: 45px;
+  }
+
+  #tutorial-screen h1 {
+    font-size: 1.3rem;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  #tutorial-screen p, #tutorial-screen li {
+    font-size: 0.9rem;
+    margin: 5px 0;
+  }
+
+  #tutorial-screen .arrow {
+    font-size: 1.3rem;
+    margin: 0 3px;
+  }
+}
+
+/* Even smaller screens (e.g., 400px or less) */
+@media (max-width: 400px) {
+  :root {
+    --grid-total-size: 85vw;
+    --tile-margin: 2px;
+  }
+
+  body {
+    font-size: 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-top: 10px;
+  }
+
+  .score-box {
+    width: 70px;
+    height: 40px;
+  }
+
+  .score-box .value {
+    font-size: 18px;
+  }
+
+  .btn {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+
+  .tile {
+    font-size: calc(var(--tile-size) / 3);
+  }
+
+  .game-instructions {
+    font-size: 0.9rem;
+  }
+
+  .power-up-button {
+    width: 50px;
+    height: 50px;
+    font-size: 12px;
+  }
+
+  .power-up-button .icon {
+    font-size: 20px;
+  }
+}
+
+/* Base button styling (applies to larger screens as well) */
+.btn, #new-game-btn, #back-home-btn, #download-state-btn {
+  padding: 10px 20px;
+  background: #8f7a66;
+  color: #f9f6f2;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 0 5px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn:hover, #new-game-btn:hover, #back-home-btn:hover, #download-state-btn:hover {
+  background: #9f8b7a;
+}
+
+/* On mobile, adjust the top buttons for easier tapping and space-saving */
+@media (max-width: 600px) {
+  /* Make buttons slightly smaller and arranged more compactly */
+  .btn, #new-game-btn, #back-home-btn, #download-state-btn {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    margin: 5px 3px;
+  }
+
+  /* Keep score boxes and buttons in a row, possibly reduce spacing */
+  .score-container {
+    flex-direction: row; /* Keep them horizontally aligned */
+    gap: 1px; /* Adjust gap as needed for tighter spacing on mobile */
+    flex-wrap: wrap; /* Allow wrapping if there isn't enough horizontal space */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Vertically center items */
+  }
+
+  /* Hide the instructions section entirely on small screens */
+  .game-instructions {
+    display: none;
+  }
+}
+
+
+/* Example: Initially hidden by default, visible only on larger screens */
+.game-instructions {
+  max-width: 600px;
+  margin: 20px auto;
+  text-align: left;
+  font-family: Arial, sans-serif;
+}
+
+/* Show instructions only on screens wider than 600px */
+@media (min-width: 601px) {
+  .game-instructions {
+    display: block;
+  }
+}
+
+
