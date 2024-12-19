@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // Level configurations
     const levels = [
-      //{ level: 0, size: 2, target: 8, powerUpUses: { undo: 0, shuffle: 0, teleport: 0, bomb: 0, deleteTile: 0 }, isTutorial: true },
+      { level: 0, size: 2, target: 4, powerUpUses: { undo: 0, shuffle: 0, teleport: 0, bomb: 0, deleteTile: 0 }, isTutorial: true },
       { level: 1, size: 3,  target: 32,  powerUpUses: { undo: 1, shuffle: 1, teleport: 1, bomb: 1, deleteTile: 1 } },
       { level: 2, size: 4,  target: 512,  powerUpUses: { undo: 2, shuffle: 2, teleport: 1, bomb: 2, deleteTile: 1 } },
       { level: 3, size: 5,  target: 2048, powerUpUses: { undo: 3, shuffle: 3, teleport: 2, bomb: 2, deleteTile: 1 } },
