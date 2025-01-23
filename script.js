@@ -106,7 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirmExit) {
         gameGrid.clearGrid();
         gameScreen.classList.add('hidden');
-        levelSelectionScreen.classList.remove('hidden');
+        splashScreen.classList.remove('hidden');
+        //levelSelectionScreen.classList.remove('hidden');
       }
     });
   
@@ -192,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     bombButton.addEventListener('click', () => {
       if (powerUpUses.bomb > 0) {
-        powerUpUses.bomb--;
+        powerUpUses.bomb--;1
         updatePowerUpTooltips();
         enableBomb();
       } else {
@@ -653,11 +654,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleTouchEnd() {
-      // Calculate the distance swiped
       const deltaX = endX - startX;
       const deltaY = endY - startY;
-
-      // Determine whether the swipe was more horizontal or vertical
+    
+      // Define a minimum distance threshold to recognize a swipe
+      const SWIPE_THRESHOLD = 30;
+    
+      // If the user moves less than the threshold, do not register it as a swipe
+      if (Math.abs(deltaX) < SWIPE_THRESHOLD && Math.abs(deltaY) < SWIPE_THRESHOLD) {
+        // It's probably just a tap, so ignore
+        return;
+      }
+    
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
         // Horizontal swipe
         if (deltaX > 0) {
@@ -677,13 +685,14 @@ document.addEventListener('DOMContentLoaded', () => {
           gameGrid.move('up');
         }
       }
-
+    
       // Reset the coordinates
       startX = null;
       startY = null;
       endX = null;
       endY = null;
     }
+    
 
   
   });

@@ -306,8 +306,8 @@ class Grid {
         });
       }
     }
-    this.generateNewNumber();
-    this.generateNewNumber();
+
+    this.generateNewNumbers();
   }
 
   // Method to add appropriate styles to tiles
@@ -318,16 +318,32 @@ class Grid {
     }
   }
 
-  // Method to generate a new number (2 or 4) at a random empty tile
-  generateNewNumber() {
-    let emptySquares = this.squares.filter(square => square.value === '');
+  generateNewNumbers(maxSpawnCount = 3) {
+    // 1) Find all empty squares
+    const emptySquares = this.squares.filter(square => square.value === '');
     if (emptySquares.length === 0) return;
-
-    let randomSquare = emptySquares[Math.floor(Math.random() * emptySquares.length)];
-    randomSquare.value = Math.random() > 0.5 ? '4' : '2';
-    randomSquare.element.innerHTML = randomSquare.value;
-    this.addTileStyles(randomSquare);
+  
+    // 2) Randomly choose how many tiles to spawn, between 1 and maxSpawnCount
+    const tilesToSpawn = Math.floor(Math.random() * maxSpawnCount) + 1;
+  
+    // 3) Spawn each tile
+    for (let i = 0; i < tilesToSpawn && emptySquares.length > 0; i++) {
+      // Pick a random empty square
+      const randomIndex = Math.floor(Math.random() * emptySquares.length);
+      const randomSquare = emptySquares[randomIndex];
+  
+      // Remove that square from the list so it's not reused
+      emptySquares.splice(randomIndex, 1);
+  
+      // Assign value: 50% chance for '2' and 50% for '4'
+      randomSquare.value = Math.random() > 0.5 ? '4' : '2';
+      randomSquare.element.innerHTML = randomSquare.value;
+  
+      // Apply tile styling/animation
+      this.addTileStyles(randomSquare);
+    }
   }
+  
 
   // Helper method to get square by coordinates
   getSquare(x, y) {
@@ -411,7 +427,7 @@ class Grid {
 
     if (moved) {
       this.saveState(state); // Save the current state before generating a new tile
-      this.generateNewNumber();
+      this.generateNewNumbers();
       this.checkForGameOver(newGame, nextGame, tutorialCompletion);
     }
   }
@@ -522,8 +538,7 @@ reset() {
     });
 
     // Generate new numbers for the starting grid
-    this.generateNewNumber();
-    this.generateNewNumber();
+    this.generateNewNumbers();
 }
 
 
@@ -556,7 +571,6 @@ reset() {
       square.element.innerHTML = '';
       square.element.className = 'tile';
     });
-    this.generateNewNumber();
-    this.generateNewNumber();
+    this.generateNewNumbers();
   }
 }
